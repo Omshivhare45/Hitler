@@ -24,7 +24,7 @@ const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
 
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/targets', { name, url, interval: Number(interval) });
+      await axios.post('https://hitler-v4xv.onrender.com/api/targets', { name, url, interval: Number(interval) });
       onAdded();
       onClose();
       setName('');

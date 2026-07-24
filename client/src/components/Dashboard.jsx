@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   const fetchTargets = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/targets');
+      const res = await axios.get('https://hitler-v4xv.onrender.com/api/targets');
       setTargets(res.data);
     } catch (err) {
       console.error('Failed to fetch targets:', err);

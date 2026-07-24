@@ -13,7 +13,7 @@ const TargetCard = ({ target, onDelete }) => {
   const handleDelete = async () => {
     if (confirm(`Remove ${target.name} from tracking?`)) {
       try {
-        await axios.delete(`http://localhost:5000/api/targets/${target._id}`);
+        await axios.delete(`https://hitler-v4xv.onrender.com/api/targets/${target._id}`);
         onDelete();
       } catch (err) {
         console.error('Failed to delete target', err);
