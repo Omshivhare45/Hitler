@@ -30,7 +30,7 @@ const Dashboard = () => {
     <div className="app-container fade-in">
       <header className="header">
         <div className="header-brand">
-          <Activity size={20} color="var(--text-primary)" />
+          <img src="/logo.png" alt="App Logo" style={{ height: '24px', width: 'auto' }} />
           <h1>Hitler</h1>
         </div>
         <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
