@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
 
 const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
   const [name, setName] = useState('');
@@ -8,6 +9,7 @@ const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
   const [interval, setIntervalVal] = useState(8);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { getToken } = useAuth();
 
   if (!isOpen) return null;
 
@@ -24,7 +26,11 @@ const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
 
     setLoading(true);
     try {
-      await axios.post('https://hitler-v4xv.onrender.com/api/targets', { name, url, interval: Number(interval) });
+      const token = await getToken();
+      await axios.post('https://hitler-v4xv.onrender.com/api/targets', 
+        { name, url, interval: Number(interval) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       onAdded();
       onClose();
       setName('');
@@ -59,48 +65,21 @@ const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="name">App Name</label>
-            <input
-              type="text"
-              id="name"
-              className="input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Main API Server"
-              required
-            />
+            <input type="text" id="name" className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Main API Server" required />
           </div>
 
           <div className="input-group">
             <label htmlFor="url">Endpoint URL</label>
-            <input
-              type="url"
-              id="url"
-              className="input"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://api.yourdomain.com/health"
-              required
-            />
+            <input type="url" id="url" className="input" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://api.yourdomain.com/health" required />
           </div>
 
           <div className="input-group">
             <label htmlFor="interval">Ping Interval (minutes)</label>
-            <input
-              type="number"
-              id="interval"
-              className="input"
-              value={interval}
-              onChange={(e) => setIntervalVal(e.target.value)}
-              min="1"
-              max="60"
-              required
-            />
+            <input type="number" id="interval" className="input" value={interval} onChange={(e) => setIntervalVal(e.target.value)} min="1" max="60" required />
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '2rem' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Cancel
-            </button>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
               {loading ? 'Adding...' : 'Add Target'}
             </button>

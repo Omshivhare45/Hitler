@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trash2, ExternalLink } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
 
 const TargetCard = ({ target, onDelete }) => {
   const isAwake = target.status === 'Awake';
@@ -10,10 +11,15 @@ const TargetCard = ({ target, onDelete }) => {
   if (isAwake) statusClass = 'status-awake';
   if (isDown) statusClass = 'status-down';
 
+  const { getToken } = useAuth();
+
   const handleDelete = async () => {
     if (confirm(`Remove ${target.name} from tracking?`)) {
       try {
-        await axios.delete(`https://hitler-v4xv.onrender.com/api/targets/${target._id}`);
+        const token = await getToken();
+        await axios.delete(`https://hitler-v4xv.onrender.com/api/targets/${target._id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         onDelete();
       } catch (err) {
         console.error('Failed to delete target', err);

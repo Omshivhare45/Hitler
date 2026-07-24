@@ -11,6 +11,10 @@ const targetSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
   interval: {
     type: Number,
     default: 8, // Default 8 minutes

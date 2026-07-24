@@ -11,7 +11,7 @@ const pingTarget = async (target) => {
     
     target.status = 'Awake';
     target.lastPing = new Date();
-    await target.save();
+    await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
     
     await Log.create({
       targetId: target._id,
@@ -24,7 +24,7 @@ const pingTarget = async (target) => {
     const latency = Date.now() - startTime;
     target.status = 'Down';
     target.lastPing = new Date();
-    await target.save();
+    await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
 
     await Log.create({
       targetId: target._id,
