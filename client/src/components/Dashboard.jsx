@@ -56,7 +56,7 @@ const Dashboard = () => {
       <header className="header">
         <div className="header-brand">
           <img src="/logo.png" alt="App Logo" style={{ height: '24px', width: 'auto' }} />
-          <h1>Hitler</h1>
+          <h1>Hitler Cron job</h1>
         </div>
         
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
