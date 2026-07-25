@@ -24,7 +24,7 @@ const Dashboard = () => {
     
     try {
       const token = await getToken();
-      const res = await axios.get('https://hitler-v4xv.onrender.com/api/targets', {
+      const res = await axios.get('http://localhost:5000/api/targets', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTargets(res.data);

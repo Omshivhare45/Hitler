@@ -11,6 +11,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+//health 
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    message: "Hitler hitting",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/api', apiRoutes);
 
 // Database connection

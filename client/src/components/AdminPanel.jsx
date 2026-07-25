@@ -13,7 +13,7 @@ const AdminPanel = ({ onBack }) => {
     const fetchAdminStats = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get('https://hitler-v4xv.onrender.com/api/admin/stats', {
+        const res = await axios.get('http://localhost:5000/api/admin/stats', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStats(res.data);

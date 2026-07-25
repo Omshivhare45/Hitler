@@ -17,7 +17,7 @@ const TargetCard = ({ target, onDelete }) => {
     if (confirm(`Remove ${target.name} from tracking?`)) {
       try {
         const token = await getToken();
-        await axios.delete(`https://hitler-v4xv.onrender.com/api/targets/${target._id}`, {
+        await axios.delete(`http://localhost:5000/api/targets/${target._id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         onDelete();
