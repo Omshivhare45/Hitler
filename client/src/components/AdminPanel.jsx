@@ -13,9 +13,9 @@ const AdminPanel = ({ onBack }) => {
     const fetchAdminStats = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get('http://localhost:5000/api/admin/stats', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/stats`, {
+  headers: { Authorization: `Bearer ${token}` }
+})
         setStats(res.data);
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to load admin data');
