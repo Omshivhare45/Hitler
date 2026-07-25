@@ -27,7 +27,7 @@ const AddTargetModal = ({ isOpen, onClose, onAdded }) => {
     setLoading(true);
     try {
       const token = await getToken();
-      await axios.post('http://localhost:5000/api/targets', 
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/targets`, 
         { name, url, interval: Number(interval) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

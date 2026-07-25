@@ -6,13 +6,13 @@ const Log = require('../models/Log');
 const pingTarget = async (target) => {
   const startTime = Date.now();
   try {
-    const response = await axios.get(target.url, { timeout: 15000 });
+    const response = await axios.get(target.url, { timeout: 60000 });
     const latency = Date.now() - startTime;
-    
+
     target.status = 'Awake';
     target.lastPing = new Date();
     await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
-    
+
     await Log.create({
       targetId: target._id,
       status: 'Success',
@@ -21,37 +21,56 @@ const pingTarget = async (target) => {
     });
     console.log(`Pinged ${target.name} successfully. Latency: ${latency}ms`);
   } catch (error) {
-    const latency = Date.now() - startTime;
-    target.status = 'Down';
-    target.lastPing = new Date();
-    await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
+    console.log(`First ping to ${target.name} failed, retrying in 20s (likely cold start)...`);
+    await new Promise((r) => setTimeout(r, 20000));
 
-    await Log.create({
-      targetId: target._id,
-      status: 'Failed',
-      statusCode: error.response ? error.response.status : 0,
-      latency,
-    });
-    console.log(`Pinged ${target.name} failed. Latency: ${latency}ms`);
+    try {
+      const retryStart = Date.now();
+      const response = await axios.get(target.url, { timeout: 60000 });
+      const latency = Date.now() - retryStart;
+
+      target.status = 'Awake';
+      target.lastPing = new Date();
+      await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
+
+      await Log.create({
+        targetId: target._id,
+        status: 'Success',
+        statusCode: response.status,
+        latency,
+      });
+      console.log(`Retry succeeded for ${target.name}. Latency: ${latency}ms`);
+      return;
+    } catch (retryError) {
+      const latency = Date.now() - startTime;
+      target.status = 'Down';
+      target.lastPing = new Date();
+      await Target.updateOne({ _id: target._id }, { $set: { status: target.status, lastPing: target.lastPing } });
+
+      await Log.create({
+        targetId: target._id,
+        status: 'Failed',
+        statusCode: retryError.response ? retryError.response.status : 0,
+        latency,
+      });
+      console.log(`Pinged ${target.name} failed after retry. Latency: ${latency}ms`);
+    }
   }
 };
 
 const startPinger = () => {
-  // Check every minute if any target needs to be pinged
   cron.schedule('* * * * *', async () => {
     try {
       const targets = await Target.find({});
       const now = new Date();
-      
+
       for (const target of targets) {
         if (!target.lastPing) {
-          // First time ping
           pingTarget(target);
         } else {
-          // Calculate difference in minutes
           const diffMs = now - target.lastPing;
           const diffMins = Math.floor(diffMs / 60000);
-          
+
           if (diffMins >= target.interval) {
             pingTarget(target);
           }

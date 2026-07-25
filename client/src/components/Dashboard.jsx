@@ -24,9 +24,9 @@ const Dashboard = () => {
     
     try {
       const token = await getToken();
-      const res = await axios.get('http://localhost:5000/api/targets', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/targets`, {
+  headers: { Authorization: `Bearer ${token}` }
+})
       setTargets(res.data);
     } catch (err) {
       console.error('Failed to fetch targets:', err);
