@@ -65,6 +65,8 @@ const startPinger = () => {
       const now = new Date();
 
       for (const target of targets) {
+        if (target.isActive === false) continue;
+
         if (!target.lastPing) {
           pingTarget(target);
         } else {

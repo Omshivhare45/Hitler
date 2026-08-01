@@ -24,6 +24,10 @@ const targetSchema = new mongoose.Schema({
     enum: ['Awake', 'Sleeping', 'Down', 'Unknown'],
     default: 'Unknown',
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   lastPing: {
     type: Date,
     default: null,

@@ -56,6 +56,27 @@ router.delete('/targets/:id', async (req, res) => {
   }
 });
 
+// Toggle a target's active status
+router.put('/targets/:id/toggle', async (req, res) => {
+  try {
+    const target = await Target.findById(req.params.id);
+    if (!target) return res.status(404).json({ error: 'Not found' });
+    if (target.userId !== req.auth.userId) return res.status(403).json({ error: 'Unauthorized' });
+    
+    target.isActive = !target.isActive;
+    if (!target.isActive) {
+      target.status = 'Sleeping';
+    } else {
+      target.status = 'Unknown';
+    }
+    await target.save();
+    res.json(target);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // Get logs for a target
 router.get('/targets/:id/logs', async (req, res) => {
   try {
